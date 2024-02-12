@@ -1,8 +1,8 @@
-from loguru import logging
+from loguru import logger
 
 
 def main():
-    logging.debug("TOIMII!")
+    logger.debug("TOIMII!")
 
 
 if __name__ == "__main__":
