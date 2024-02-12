@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     grist_api_key: str
     grist_api_userdoc: str
     grist_api_usertable: str
+    slack_bot_token: str
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="allow"

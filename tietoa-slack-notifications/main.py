@@ -1,5 +1,6 @@
 import httpx
 import models
+import slack_sdk
 from config import settings
 from loguru import logger
 
@@ -22,15 +23,26 @@ def filter_users(users: list[models.UserOutputModel]):
     return [user for user in users if user.notifications]
 
 
+def build_block(message: str):
+    return {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": message,
+        },
+    }
+
+
 def main():
     users = fetch_userdata()
     filtered_users = filter_users(users)
 
+    client = slack_sdk.WebClient(token=settings.slack_bot_token)
+
     for user in filtered_users:
-        logger.debug(
-            f"Sending Slack notification to {user.username} ({user.user}) [{user.tags}] to {settings.frontend_public_url}/i/{user.user}"
-        )
-        logger.debug(f"   > https://tie.up.railway.app/kiire/{user.username}")
+        msg = f"Terve <@{user.user}>! Muista vastata kiirekyselyyn:\n> <https://tie.up.railway.app/kiire/{user.username}>"
+
+        client.chat_postMessage(channel=user.user, blocks=[build_block(msg)], text=msg)
 
 
 if __name__ == "__main__":
